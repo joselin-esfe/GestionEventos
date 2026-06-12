@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EventSecurityApp
 
 EventSecurityApp es una aplicación de escritorio diseñada para la gestión y control de seguridad en eventos, implementada utilizando **Java Swing** y estructurada mediante **Maven**.
@@ -35,3 +36,6 @@ El código fuente se organiza bajo el paquete raíz `com.eventsecurityapp` con l
     mvn clean compile
     ```
 7.  Para iniciar la aplicación, ejecuta la clase principal `com.eventsecurityapp.Main`.
+=======
+
+>>>>>>> bc8a920e5ba5d5683706d99c2f8a909778f03017
