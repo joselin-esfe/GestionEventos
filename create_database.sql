@@ -1,3 +1,7 @@
+INSERT INTO dbo.users (nombre, email, password, status)
+VALUES ('Administrador', 'admin@eventsecurity.com', 'admin123', 1);
+GO
+
 -- 1. Crear la base de datos si no existe
 IF NOT EXISTS (SELECT * FROM sys.databases WHERE name = N'EventSecurityDB')
 BEGIN

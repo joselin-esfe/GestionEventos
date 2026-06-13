@@ -15,11 +15,12 @@ public class ConnectionManager {
     private Connection connection;
 
     // Configuración por defecto para SQL Server
-    private static final String URL = "jdbc:sqlserver://DESKTOP-8MR9C2K:1433;" +
+    private static final String URL = "jdbc:sqlserver://localhost;" +
+            "instanceName=SQLEXPRESS;" +
             "databaseName=EventSecurityDB;" +
+            "integratedSecurity=false;" +
             "encrypt=true;" +
             "trustServerCertificate=true;";
-
     private static final String USER = "sa";
     private static final String PASSWORD = "Eventos2026*";
 
