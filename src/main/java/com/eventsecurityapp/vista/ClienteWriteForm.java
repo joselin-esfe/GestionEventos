@@ -4,12 +4,14 @@ import com.eventsecurityapp.controlador.ClienteController;
 import com.eventsecurityapp.modelo.Cliente;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
  * Diálogo modal para registrar y modificar clientes en EventSecurityApp.
+ * Estilizado con los componentes y la paleta de colores premium.
  */
 public class ClienteWriteForm extends JDialog {
 
@@ -23,7 +25,7 @@ public class ClienteWriteForm extends JDialog {
     private JButton btnCancelar;
 
     private ClienteReadForm parentForm;
-    private Cliente clienteOriginal; // Null para inserción, contiene datos para edición
+    private Cliente clienteOriginal;
     private ClienteController controller;
 
     /**
@@ -33,7 +35,7 @@ public class ClienteWriteForm extends JDialog {
      * @param cliente    Cliente a editar o null para crear uno nuevo.
      */
     public ClienteWriteForm(ClienteReadForm parentForm, Cliente cliente) {
-        super(parentForm, cliente == null ? "Registrar Cliente" : "Modificar Cliente", true);
+        super((Frame) SwingUtilities.getWindowAncestor(parentForm), cliente == null ? "Registrar Cliente" : "Modificar Cliente", true);
         this.parentForm = parentForm;
         this.clienteOriginal = cliente;
         this.controller = new ClienteController();
@@ -48,59 +50,88 @@ public class ClienteWriteForm extends JDialog {
      */
     private void inicializarComponentes() {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(400, 320);
+        setSize(420, 340);
         setLocationRelativeTo(getParent());
         setResizable(false);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.insets = new Insets(8, 8, 8, 8);
 
         // DNI
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
-        panel.add(new JLabel("DNI (*):"), gbc);
-        txtDni = new JTextField(20);
+        JLabel lblDni = new JLabel("DNI (*):");
+        ModernComponents.styleLabel(lblDni);
+        panel.add(lblDni, gbc);
+
+        txtDni = new JTextField();
+        ModernComponents.styleTextField(txtDni);
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.7;
         panel.add(txtDni, gbc);
 
         // Nombre
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
-        panel.add(new JLabel("Nombre (*):"), gbc);
-        txtNombre = new JTextField(20);
+        JLabel lblNombre = new JLabel("Nombre (*):");
+        ModernComponents.styleLabel(lblNombre);
+        panel.add(lblNombre, gbc);
+
+        txtNombre = new JTextField();
+        ModernComponents.styleTextField(txtNombre);
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 0.7;
         panel.add(txtNombre, gbc);
 
         // Email
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.3;
-        panel.add(new JLabel("Email:"), gbc);
-        txtEmail = new JTextField(20);
+        JLabel lblEmail = new JLabel("Email:");
+        ModernComponents.styleLabel(lblEmail);
+        panel.add(lblEmail, gbc);
+
+        txtEmail = new JTextField();
+        ModernComponents.styleTextField(txtEmail);
         gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.7;
         panel.add(txtEmail, gbc);
 
         // Teléfono
         gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.3;
-        panel.add(new JLabel("Teléfono:"), gbc);
-        txtTelefono = new JTextField(20);
+        JLabel lblTel = new JLabel("Teléfono:");
+        ModernComponents.styleLabel(lblTel);
+        panel.add(lblTel, gbc);
+
+        txtTelefono = new JTextField();
+        ModernComponents.styleTextField(txtTelefono);
         gbc.gridx = 1; gbc.gridy = 3; gbc.weightx = 0.7;
         panel.add(txtTelefono, gbc);
 
         // Estado
         gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.3;
-        panel.add(new JLabel("Estado:"), gbc);
+        JLabel lblEstado = new JLabel("Estado:");
+        ModernComponents.styleLabel(lblEstado);
+        panel.add(lblEstado, gbc);
+
         chkStatus = new JCheckBox("Activo", true);
+        chkStatus.setOpaque(false);
+        chkStatus.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         gbc.gridx = 1; gbc.gridy = 4; gbc.weightx = 0.7;
         panel.add(chkStatus, gbc);
 
         // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnGuardar = new JButton("Guardar");
-        btnCancelar = new JButton("Cancelar");
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        panelBotones.setOpaque(false);
+
+        btnGuardar = new ModernComponents.ModernButton("Guardar");
+        btnGuardar.setPreferredSize(new Dimension(100, 34));
+
+        btnCancelar = new ModernComponents.ModernButton("Cancelar", new Color(180, 180, 180), new Color(150, 150, 150));
+        btnCancelar.setPreferredSize(new Dimension(100, 34));
+
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
 
         gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2; gbc.weightx = 1.0;
+        gbc.insets = new Insets(15, 8, 0, 8);
         panel.add(panelBotones, gbc);
 
         add(panel);
@@ -114,8 +145,8 @@ public class ClienteWriteForm extends JDialog {
     private void cargarCampos() {
         txtDni.setText(clienteOriginal.getDni());
         txtNombre.setText(clienteOriginal.getNombre());
-        txtEmail.setText(clienteOriginal.getEmail());
-        txtTelefono.setText(clienteOriginal.getTelefono());
+        txtEmail.setText(clienteOriginal.getEmail() != null ? clienteOriginal.getEmail() : "");
+        txtTelefono.setText(clienteOriginal.getTelefono() != null ? clienteOriginal.getTelefono() : "");
         chkStatus.setSelected(clienteOriginal.isStatus());
     }
 
@@ -148,7 +179,6 @@ public class ClienteWriteForm extends JDialog {
         String telefono = txtTelefono.getText().trim();
         boolean status = chkStatus.isSelected();
 
-        // 1. Validar campos obligatorios
         if (dni.isEmpty() || nombre.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Los campos DNI y Nombre son obligatorios.",
@@ -157,7 +187,6 @@ public class ClienteWriteForm extends JDialog {
             return;
         }
 
-        // 2. Construir objeto
         Cliente cliente = new Cliente();
         cliente.setDni(dni);
         cliente.setNombre(nombre);
@@ -179,8 +208,8 @@ public class ClienteWriteForm extends JDialog {
                     "Guardado Exitoso",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            parentForm.cargarDatos(); // Refrescar listado
-            dispose(); // Cerrar modal
+            parentForm.cargarDatos();
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this,
                     "Ocurrió un error al guardar el cliente en la base de datos.",

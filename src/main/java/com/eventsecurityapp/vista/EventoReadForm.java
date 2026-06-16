@@ -4,6 +4,7 @@ import com.eventsecurityapp.modelo.Evento;
 import com.eventsecurityapp.persistencia.EventoDAO;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -15,9 +16,9 @@ import java.util.List;
 
 /**
  * Formulario para visualizar, buscar y gestionar la lista de eventos.
- * Desarrollado utilizando componentes estándar de Java Swing.
+ * Rediseñado como un JPanel para integrarse en el CardLayout del Dashboard.
  */
-public class EventoReadForm extends JFrame {
+public class EventoReadForm extends JPanel {
 
     private JTable tblEventos;
     private DefaultTableModel tableModel;
@@ -31,66 +32,104 @@ public class EventoReadForm extends JFrame {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     /**
-     * Constructor del formulario.
+     * Constructor del panel de consulta de eventos.
      */
     public EventoReadForm() {
-        super("Administración de Eventos - EventSecurityApp");
         this.eventoDAO = new EventoDAO();
         inicializarComponentes();
         cargarDatos();
     }
 
     /**
-     * Inicializa los componentes de la interfaz de usuario.
+     * Inicializa los componentes de la interfaz de usuario con diseño premium.
      */
     private void inicializarComponentes() {
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(850, 500);
-        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(15, 15));
+        setBackground(ModernComponents.COLOR_BACKGROUND);
+        setBorder(new EmptyBorder(25, 25, 25, 25));
 
-        // Panel superior para la búsqueda
-        JPanel panelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSuperior.setBorder(BorderFactory.createTitledBorder("Búsqueda"));
-        panelSuperior.add(new JLabel("Buscar por nombre:"));
-        txtBuscar = new JTextField(30);
-        panelSuperior.add(txtBuscar);
+        // --- Encabezado del Módulo ---
+        JPanel panelTitle = new JPanel(new BorderLayout());
+        panelTitle.setOpaque(false);
 
-        // Tabla de eventos
+        JLabel lblTitle = new JLabel("Gestión de Eventos");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitle.setForeground(ModernComponents.COLOR_PRIMARY);
+        panelTitle.add(lblTitle, BorderLayout.WEST);
+
+        // --- Panel Superior (Filtro de Búsqueda) ---
+        JPanel panelBusqueda = new JPanel(new GridBagLayout());
+        panelBusqueda.setBackground(Color.WHITE);
+        panelBusqueda.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(230, 230, 235), 1),
+                BorderFactory.createEmptyBorder(15, 15, 15, 15)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(0, 5, 0, 5);
+
+        JLabel lblBuscar = new JLabel("Buscar por nombre:");
+        ModernComponents.styleLabel(lblBuscar);
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.0;
+        panelBusqueda.add(lblBuscar, gbc);
+
+        txtBuscar = new JTextField();
+        ModernComponents.styleTextField(txtBuscar);
+        gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 1.0;
+        panelBusqueda.add(txtBuscar, gbc);
+
+        // --- JTable y Scroll Pane ---
         tableModel = new DefaultTableModel(
                 new Object[]{"ID", "Nombre", "Descripción", "Fecha/Hora", "Lugar", "Cupos Totales", "Cupos Disp.", "Estado"}, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Celdas no editables directamente
+                return false;
             }
         };
 
         tblEventos = new JTable(tableModel);
         tblEventos.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        ModernComponents.styleTable(tblEventos);
 
-        // Ocultar columna ID (columna 0) de la vista pero mantenerla en el modelo
+        // Ocultar la columna ID (pero mantener el valor)
         tblEventos.getColumnModel().getColumn(0).setMinWidth(0);
         tblEventos.getColumnModel().getColumn(0).setMaxWidth(0);
         tblEventos.getColumnModel().getColumn(0).setWidth(0);
 
         JScrollPane scrollPane = new JScrollPane(tblEventos);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(230, 230, 235)));
 
-        // Panel lateral/inferior para los botones de acción
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnNuevo = new JButton("Nuevo");
-        btnEditar = new JButton("Editar");
-        btnEliminar = new JButton("Eliminar");
-        btnCerrar = new JButton("Cerrar");
+        // --- Panel de Acciones Inferior ---
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        panelBotones.setOpaque(false);
+
+        btnNuevo = new ModernComponents.ModernButton("Nuevo");
+        btnNuevo.setPreferredSize(new Dimension(100, 36));
+
+        btnEditar = new ModernComponents.ModernButton("Editar", ModernComponents.COLOR_SECONDARY, ModernComponents.COLOR_PRIMARY);
+        btnEditar.setPreferredSize(new Dimension(100, 36));
+
+        btnEliminar = new ModernComponents.ModernButton("Eliminar", new Color(180, 50, 50), new Color(150, 30, 30));
+        btnEliminar.setPreferredSize(new Dimension(100, 36));
+
+        btnCerrar = new ModernComponents.ModernButton("Volver", new Color(120, 120, 130), new Color(100, 100, 110));
+        btnCerrar.setPreferredSize(new Dimension(100, 36));
 
         panelBotones.add(btnNuevo);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
         panelBotones.add(btnCerrar);
 
-        // Distribución en el contenedor
-        setLayout(new BorderLayout());
-        add(panelSuperior, BorderLayout.NORTH);
+        // Contenedor Norte: Título + Buscador
+        JPanel panelNorte = new JPanel(new BorderLayout(10, 10));
+        panelNorte.setOpaque(false);
+        panelNorte.add(panelTitle, BorderLayout.NORTH);
+        panelNorte.add(panelBusqueda, BorderLayout.SOUTH);
+
+        // Armar el panel principal
+        add(panelNorte, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(panelBotones, BorderLayout.SOUTH);
 
@@ -104,19 +143,11 @@ public class EventoReadForm extends JFrame {
         // Buscar en tiempo real
         txtBuscar.getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void insertUpdate(DocumentEvent e) {
-                realizarBusqueda();
-            }
-
+            public void insertUpdate(DocumentEvent e) { realizarBusqueda(); }
             @Override
-            public void removeUpdate(DocumentEvent e) {
-                realizarBusqueda();
-            }
-
+            public void removeUpdate(DocumentEvent e) { realizarBusqueda(); }
             @Override
-            public void changedUpdate(DocumentEvent e) {
-                realizarBusqueda();
-            }
+            public void changedUpdate(DocumentEvent e) { realizarBusqueda(); }
         });
 
         // Botón Nuevo
@@ -145,7 +176,7 @@ public class EventoReadForm extends JFrame {
             }
         });
 
-        // Botón Eliminar (Inactivar)
+        // Botón Eliminar
         btnEliminar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -184,11 +215,15 @@ public class EventoReadForm extends JFrame {
             }
         });
 
-        // Botón Cerrar
+        // Botón Cerrar (vuelve a la pestaña Inicio del CardLayout del Dashboard)
         btnCerrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
+                Container parent = getParent();
+                if (parent != null && parent.getLayout() instanceof CardLayout) {
+                    CardLayout cl = (CardLayout) parent.getLayout();
+                    cl.show(parent, "Inicio");
+                }
             }
         });
     }
@@ -260,5 +295,19 @@ public class EventoReadForm extends JFrame {
     private void abrirFormularioEscritura(Evento evento) {
         EventoWriteForm writeForm = new EventoWriteForm(this, evento);
         writeForm.setVisible(true);
+    }
+
+    /**
+     * Permite ejecutar y visualizar este panel en IntelliJ de manera independiente.
+     */
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("Prueba EventoReadForm");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new EventoReadForm());
+            frame.setSize(850, 500);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
     }
 }

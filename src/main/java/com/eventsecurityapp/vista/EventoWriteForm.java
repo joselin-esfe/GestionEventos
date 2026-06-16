@@ -4,6 +4,7 @@ import com.eventsecurityapp.modelo.Evento;
 import com.eventsecurityapp.persistencia.EventoDAO;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +14,7 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Formulario para la creación o modificación de un Evento.
- * Se presenta como un diálogo modal.
+ * Presentado como un JDialog modal estilizado y moderno.
  */
 public class EventoWriteForm extends JDialog {
 
@@ -29,7 +30,7 @@ public class EventoWriteForm extends JDialog {
     private JButton btnCancelar;
 
     private EventoReadForm parentForm;
-    private Evento eventoOriginal; // Null en caso de creación, con datos en edición
+    private Evento eventoOriginal;
     private EventoDAO eventoDAO;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -40,7 +41,7 @@ public class EventoWriteForm extends JDialog {
      * @param evento     Objeto Evento a editar o null para crear uno nuevo.
      */
     public EventoWriteForm(EventoReadForm parentForm, Evento evento) {
-        super(parentForm, evento == null ? "Registrar Evento" : "Modificar Evento", true);
+        super((Frame) SwingUtilities.getWindowAncestor(parentForm), evento == null ? "Registrar Evento" : "Modificar Evento", true);
         this.parentForm = parentForm;
         this.eventoOriginal = evento;
         this.eventoDAO = new EventoDAO();
@@ -55,74 +56,111 @@ public class EventoWriteForm extends JDialog {
      */
     private void inicializarComponentes() {
         setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-        setSize(450, 380);
+        setSize(480, 420);
         setLocationRelativeTo(getParent());
         setResizable(false);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        panel.setBackground(Color.WHITE);
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(6, 6, 6, 6);
+        gbc.insets = new Insets(8, 8, 8, 8);
 
         // Nombre
         gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
-        panel.add(new JLabel("Nombre (*):"), gbc);
-        txtNombre = new JTextField(20);
+        JLabel lblNombre = new JLabel("Nombre (*):");
+        ModernComponents.styleLabel(lblNombre);
+        panel.add(lblNombre, gbc);
+
+        txtNombre = new JTextField();
+        ModernComponents.styleTextField(txtNombre);
         gbc.gridx = 1; gbc.gridy = 0; gbc.weightx = 0.7;
         panel.add(txtNombre, gbc);
 
         // Descripción
         gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
-        panel.add(new JLabel("Descripción:"), gbc);
-        txtDescripcion = new JTextField(20);
+        JLabel lblDesc = new JLabel("Descripción:");
+        ModernComponents.styleLabel(lblDesc);
+        panel.add(lblDesc, gbc);
+
+        txtDescripcion = new JTextField();
+        ModernComponents.styleTextField(txtDescripcion);
         gbc.gridx = 1; gbc.gridy = 1; gbc.weightx = 0.7;
         panel.add(txtDescripcion, gbc);
 
         // Fecha
         gbc.gridx = 0; gbc.gridy = 2; gbc.weightx = 0.3;
-        panel.add(new JLabel("Fecha (yyyy-MM-dd HH:mm) (*):"), gbc);
-        txtFecha = new JTextField(20);
+        JLabel lblFecha = new JLabel("Fecha (*):");
+        ModernComponents.styleLabel(lblFecha);
+        panel.add(lblFecha, gbc);
+
+        txtFecha = new JTextField();
+        ModernComponents.styleTextField(txtFecha);
         txtFecha.setToolTipText("Ejemplo: 2026-12-31 23:59");
         gbc.gridx = 1; gbc.gridy = 2; gbc.weightx = 0.7;
         panel.add(txtFecha, gbc);
 
         // Lugar
         gbc.gridx = 0; gbc.gridy = 3; gbc.weightx = 0.3;
-        panel.add(new JLabel("Lugar (*):"), gbc);
-        txtLugar = new JTextField(20);
+        JLabel lblLugar = new JLabel("Lugar (*):");
+        ModernComponents.styleLabel(lblLugar);
+        panel.add(lblLugar, gbc);
+
+        txtLugar = new JTextField();
+        ModernComponents.styleTextField(txtLugar);
         gbc.gridx = 1; gbc.gridy = 3; gbc.weightx = 0.7;
         panel.add(txtLugar, gbc);
 
         // Cupos Totales
         gbc.gridx = 0; gbc.gridy = 4; gbc.weightx = 0.3;
-        panel.add(new JLabel("Cupos Totales (*):"), gbc);
-        txtCuposTotales = new JTextField(20);
+        JLabel lblCuposT = new JLabel("Cupos Totales (*):");
+        ModernComponents.styleLabel(lblCuposT);
+        panel.add(lblCuposT, gbc);
+
+        txtCuposTotales = new JTextField();
+        ModernComponents.styleTextField(txtCuposTotales);
         gbc.gridx = 1; gbc.gridy = 4; gbc.weightx = 0.7;
         panel.add(txtCuposTotales, gbc);
 
         // Cupos Disponibles
         gbc.gridx = 0; gbc.gridy = 5; gbc.weightx = 0.3;
-        panel.add(new JLabel("Cupos Disponibles (*):"), gbc);
-        txtCuposDisponibles = new JTextField(20);
+        JLabel lblCuposD = new JLabel("Cupos Disp. (*):");
+        ModernComponents.styleLabel(lblCuposD);
+        panel.add(lblCuposD, gbc);
+
+        txtCuposDisponibles = new JTextField();
+        ModernComponents.styleTextField(txtCuposDisponibles);
         gbc.gridx = 1; gbc.gridy = 5; gbc.weightx = 0.7;
         panel.add(txtCuposDisponibles, gbc);
 
         // Estado
         gbc.gridx = 0; gbc.gridy = 6; gbc.weightx = 0.3;
-        panel.add(new JLabel("Estado:"), gbc);
+        JLabel lblEstado = new JLabel("Estado:");
+        ModernComponents.styleLabel(lblEstado);
+        panel.add(lblEstado, gbc);
+
         chkStatus = new JCheckBox("Activo", true);
+        chkStatus.setOpaque(false);
+        chkStatus.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         gbc.gridx = 1; gbc.gridy = 6; gbc.weightx = 0.7;
         panel.add(chkStatus, gbc);
 
-        // Botones
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        btnGuardar = new JButton("Guardar");
-        btnCancelar = new JButton("Cancelar");
+        // Panel Botones
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        panelBotones.setOpaque(false);
+
+        btnGuardar = new ModernComponents.ModernButton("Guardar");
+        btnGuardar.setPreferredSize(new Dimension(100, 34));
+
+        btnCancelar = new ModernComponents.ModernButton("Cancelar", new Color(180, 180, 180), new Color(150, 150, 150));
+        btnCancelar.setPreferredSize(new Dimension(100, 34));
+
         panelBotones.add(btnGuardar);
         panelBotones.add(btnCancelar);
 
         gbc.gridx = 0; gbc.gridy = 7; gbc.gridwidth = 2; gbc.weightx = 1.0;
+        gbc.insets = new Insets(15, 8, 0, 8);
         panel.add(panelBotones, gbc);
 
         add(panel);
@@ -135,7 +173,7 @@ public class EventoWriteForm extends JDialog {
      */
     private void cargarCampos() {
         txtNombre.setText(eventoOriginal.getNombre());
-        txtDescripcion.setText(eventoOriginal.getDescripcion());
+        txtDescripcion.setText(eventoOriginal.getDescripcion() != null ? eventoOriginal.getDescripcion() : "");
         txtFecha.setText(eventoOriginal.getFecha() != null ? eventoOriginal.getFecha().format(DATE_FORMATTER) : "");
         txtLugar.setText(eventoOriginal.getLugar());
         txtCuposTotales.setText(String.valueOf(eventoOriginal.getCuposTotales()));
@@ -174,7 +212,6 @@ public class EventoWriteForm extends JDialog {
         String cuposDisponiblesStr = txtCuposDisponibles.getText().trim();
         boolean status = chkStatus.isSelected();
 
-        // 1. Validar que los campos obligatorios no estén vacíos
         if (nombre.isEmpty() || fechaStr.isEmpty() || lugar.isEmpty() || cuposTotalesStr.isEmpty() || cuposDisponiblesStr.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Todos los campos marcados con (*) son obligatorios.",
@@ -183,7 +220,6 @@ public class EventoWriteForm extends JDialog {
             return;
         }
 
-        // 2. Validar formato de Fecha
         LocalDateTime fecha;
         try {
             fecha = LocalDateTime.parse(fechaStr, DATE_FORMATTER);
@@ -195,7 +231,6 @@ public class EventoWriteForm extends JDialog {
             return;
         }
 
-        // 3. Validar números enteros en cupos
         int cuposTotales;
         int cuposDisponibles;
         try {
@@ -209,7 +244,6 @@ public class EventoWriteForm extends JDialog {
             return;
         }
 
-        // 4. Crear o actualizar objeto Evento
         Evento evento = new Evento();
         evento.setNombre(nombre);
         evento.setDescripcion(descripcion.isEmpty() ? null : descripcion);
@@ -221,10 +255,8 @@ public class EventoWriteForm extends JDialog {
 
         boolean exito;
         if (eventoOriginal == null) {
-            // Modo inserción
             exito = eventoDAO.insertar(evento);
         } else {
-            // Modo edición
             evento.setId(eventoOriginal.getId());
             exito = eventoDAO.actualizar(evento);
         }
@@ -235,8 +267,8 @@ public class EventoWriteForm extends JDialog {
                     "Guardado Exitoso",
                     JOptionPane.INFORMATION_MESSAGE);
 
-            parentForm.cargarDatos(); // Refrescar tabla en la vista de consulta
-            dispose(); // Cerrar diálogo modal
+            parentForm.cargarDatos();
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this,
                     "Ocurrió un error al intentar guardar el evento en la base de datos.",

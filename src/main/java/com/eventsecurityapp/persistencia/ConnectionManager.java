@@ -12,7 +12,6 @@ import java.sql.SQLException;
 public class ConnectionManager {
 
     private static ConnectionManager instance;
-    private Connection connection;
 
     // Configuración por defecto para SQL Server
     private static final String URL = "jdbc:sqlserver://DESKTOP-8MR9C2K:1433;" +
@@ -49,34 +48,16 @@ public class ConnectionManager {
     }
 
     /**
-     * Obtiene una conexión activa a la base de datos SQL Server.
-     * Si la conexión actual es nula o está cerrada, crea una nueva.
+     * Obtiene una nueva conexión a la base de datos SQL Server.
+     * Cada llamada crea una conexión independiente para evitar conflictos
+     * de concurrencia entre hilos (SwingWorker) y el hilo de despacho de eventos (EDT).
+     * El llamador es responsable de cerrar la conexión después de usarla
+     * (idealmente con try-with-resources).
      *
-     * @return Objeto Connection activo.
+     * @return Objeto Connection nuevo y activo.
      * @throws SQLException si ocurre un error en la conexión.
      */
-    public synchronized Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        }
-        return connection;
-    }
-
-    /**
-     * Cierra la conexión actual a la base de datos si se encuentra abierta.
-     */
-    public synchronized void closeConnection() {
-        if (connection != null) {
-            try {
-                if (!connection.isClosed()) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión de la base de datos.");
-                e.printStackTrace();
-            } finally {
-                connection = null;
-            }
-        }
+    public Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
